@@ -1,6 +1,6 @@
 # Olist Customer Satisfaction Prediction API
 
-A REST API that predicts whether an Olist customer will leave a positive review (4-5 stars) based on order and delivery features. Built with Flask, containerized with Docker, and deployed on Render.com.
+For HW4, I depoloyed the LIght GBM model that I built in HW2 as a live REST API. The model will predict whether an Olist customer will leave a positive or negative review based on order and delivery feature. This will be more like a early warning system for dissatisfied customers. 
 
 ## Live URL
 [https://your-app.onrender.com](https://hw4-mlops-k1h1.onrender.com) 
@@ -8,7 +8,13 @@ A REST API that predicts whether an Olist customer will leave a positive review 
 ## Model Information
 - **Model:** Tuned LightGBM Classifier (from HW2)
 - **Task:** Binary classification — positive review (1) vs negative review (0)
-- **Key Metrics:** AUC: 0.74, F1: 0.72, Accuracy: 0.73
+- **Key Metrics:** AUC: 0.74, Recall: 0.52, F1: 0.72 for Negative Reviews
+- **Features:** 12 order and delivery features available before review is written to avoid data leakage
+
+## What I Learned
+This was my first time deploying a machine learning model outside of a notebook. The biggest challenge was working in the terminal. Debugging Docker containers and dependency errors was completely new to me. Getting everything to work locally first, then in Docker, then live on Render was a big relief when it finally came together!
+
+*AI assistance was used to help set up the Flask API, Docker configuration, and deployment steps.*
 
 ## API Endpoints
 
@@ -58,12 +64,14 @@ Batch prediction. Send a JSON array of up to 100 records.
 |---|---|---|
 | delivery_days | int | Days from purchase to delivery |
 | delivery_vs_estimated | int | Days early (negative) or late (positive) |
-| price | float | Product price in BRL |
 | freight_value | float | Shipping cost in BRL |
-| item_category | string | Product category name |
+| product_category_name | string | Product category name |
 | seller_state | string | Brazilian state code (e.g. SP) |
 | payment_type_main | string | Payment method (credit_card, boleto, etc.) |
+| seller_historical_average_rating | float | Seller's average rating |
+| is_new_seller | int | Whether seller is new (0 or 1) |
 | num_items | int | Number of items in the order |
+| payment_value_total | float | Total payment value in BRL |
 | order_hour | int | Hour of day the order was placed (0-23) |
 | order_dayofweek | string | Day of week the order was placed |
 
