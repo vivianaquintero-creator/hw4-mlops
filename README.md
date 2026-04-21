@@ -1,9 +1,9 @@
 # Olist Customer Satisfaction Prediction API
 
-For HW4, I depoloyed the LIght GBM model that I built in HW2 as a live REST API. The model will predict whether an Olist customer will leave a positive or negative review based on order and delivery feature. This will be more like a early warning system for dissatisfied customers. 
+For HW4, I deployed the LightGBM model that I built in HW2 as a live REST API. The model predicts whether an Olist customer will leave a positive or negative review based on order and delivery features. This can serve as an early warning system for dissatisfied customers, allowing Olist to intervene proactively before a negative review is submitted.
 
 ## Live URL
-https://hw4-mlops-k1h1.onrender.com
+https://hw4-mlops-k1h1.onrender.com/health
 
 ## Model Information
 - **Model:** Tuned LightGBM Classifier (from HW2)
@@ -14,7 +14,7 @@ https://hw4-mlops-k1h1.onrender.com
 ## What I Learned
 This was my first time deploying a machine learning model outside of a notebook. The biggest challenge was working in the terminal. Debugging Docker containers and dependency errors was completely new to me. Getting everything to work locally first, then in Docker, then live on Render was a big relief when it finally came together!
 
-*AI assistance was used to help set up the Flask API, Docker configuration, and deployment steps.*
+*I used AI to help troubleshoot for Flask API, Docker configuration, and deployment steps.*
 
 ## API Endpoints
 
@@ -23,7 +23,7 @@ Health check — confirms the API is running and model is loaded.
 
 **Response:**
 ```json
-{"status": "healthy", "model": "loaded", "model_type": "Pipeline", "n_features": 10}
+{"status": "healthy", "model": "loaded", "model_type": "Pipeline", "n_features": 12}
 ```
 
 ### POST /predict
@@ -34,12 +34,14 @@ Single prediction. Send a JSON object with order features.
 {
   "delivery_days": 7,
   "delivery_vs_estimated": -2,
-  "price": 149.99,
   "freight_value": 15.50,
-  "item_category": "health_beauty",
+  "product_category_name": "health_beauty",
   "seller_state": "SP",
   "payment_type_main": "credit_card",
+  "seller_historical_average_rating": 4.2,
+  "is_new_seller": 0,
   "num_items": 1,
+  "payment_value_total": 165.49,
   "order_hour": 14,
   "order_dayofweek": "Monday"
 }
@@ -47,7 +49,7 @@ Single prediction. Send a JSON object with order features.
 
 **Response:**
 ```json
-{"prediction": 1, "probability": 0.73, "label": "positive"}
+{"prediction": 1, "probability": 0.65, "label": "positive"}
 ```
 
 ### POST /predict/batch
@@ -55,7 +57,7 @@ Batch prediction. Send a JSON array of up to 100 records.
 
 **Response:**
 ```json
-{"predictions": [{"prediction": 1, "probability": 0.73, "label": "positive"}], "count": 1}
+{"predictions": [{"prediction": 1, "probability": 0.65, "label": "positive"}], "count": 1}
 ```
 
 ## Input Schema
@@ -77,22 +79,40 @@ Batch prediction. Send a JSON array of up to 100 records.
 
 ## Local Setup
 
+### Prerequisites
+- Python 3.9+
+- Homebrew (Mac only)
+- libomp (required for LightGBM on Mac)
+
+### Installation
 ```bash
-pip install -r requirements.txt
-python app.py
-# API runs on http://localhost:5000
+# Install libomp (Mac only - required for LightGBM)
+brew install libomp
+
+# Install dependencies
+pip3 install -r requirements.txt
+
+# Run the API
+PORT=5001 python3 app.py
+# API runs on http://localhost:5001
 ```
 
-## Docker
+### Note on Port
+Port 5000 may be in use by AirPlay on Mac.
+Use PORT=5001 or disable AirPlay Receiver in System Settings.
 
+## Docker
 ```bash
 docker build -t hw4-api .
 docker run -p 5000:5000 hw4-api
+# API runs on http://localhost:5000
 ```
 
 ## Testing
-
 ```bash
-python test_api.py                               # test local
-python test_api.py https://your-app.onrender.com # test deployed
+# Test locally
+python3 test_api.py http://localhost:5001
+
+# Test deployed API
+python3 test_api.py https://hw4-mlops-k1h1.onrender.com
 ```
