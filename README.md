@@ -3,7 +3,7 @@
 For HW4, I depoloyed the LIght GBM model that I built in HW2 as a live REST API. The model will predict whether an Olist customer will leave a positive or negative review based on order and delivery feature. This will be more like a early warning system for dissatisfied customers. 
 
 ## Live URL
-[https://your-app.onrender.com](https://hw4-mlops-k1h1.onrender.com) 
+https://hw4-mlops-k1h1.onrender.com
 
 ## Model Information
 - **Model:** Tuned LightGBM Classifier (from HW2)
